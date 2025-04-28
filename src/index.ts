@@ -43,5 +43,5 @@ app.post("/api/users", (req, res) => {
 /* SERVER */
 const port = Number(process.env.PORT) || 8080;
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on part ${port}`);
+  console.log(`Server running on port ${port}`);
 });
