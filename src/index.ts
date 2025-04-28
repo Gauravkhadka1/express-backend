@@ -41,7 +41,7 @@ app.post("/api/users", (req, res) => {
 // app.use("/search", searchRoutes);
 
 /* SERVER */
-const port = Number(process.env.PORT) || 3000;
+const port = Number(process.env.PORT) || 8080;
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server running on part ${port}`);
 });
