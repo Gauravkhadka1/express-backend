@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider      = "prisma-client-js"
+  engineType    = "binary"       // Force binary engine (avoids WASM)
+  binaryTargets = ["native"]     // Target the host system
+  
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId            Int     @id @default(autoincrement())
+  username          String?
+  email             String  @unique
+  profilePictureUrl String?
+  password          String?
+  role              Role    @default(INTERN) // New column with default role
+  activityLogs      ActivityLog[]
+  comments         Comment[]
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  INTERN
+}
+
+
+model Project {
+  id           Int           @id @default(autoincrement())
+  name         String
+  status       String @default("New")
+  description  String?
+  startDate    DateTime?
+  endDate      DateTime?
+    googleDriveLink String? 
+  tasks        Task[]
+}
+
+model Prospects {
+  id           Int           @id @default(autoincrement())
+  name         String
+  status       String @default("New")
+  category  String?
+  inquiryDate    DateTime?
+}
+
+model Task {
+  id             Int       @id @default(autoincrement())
+  title          String
+  description    String?
+  status         String?
+  priority       String?
+  startDate      DateTime?
+  dueDate        DateTime?
+  projectId      Int
+  assignedBy  String
+  assignedTo String
+  project         Project          @relation(fields: [projectId], references: [id])
+  activityLogs    ActivityLog[]
+  comments        Comment[]
+}
+
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  details   String?
+  timestamp DateTime @default(now())
+  userId    Int
+  taskId    Int
+  user      User     @relation(fields: [userId], references: [userId])
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  userId    Int
+ user      User     @relation(fields: [userId], references: [userId])
+  taskId    Int
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
